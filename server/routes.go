@@ -38,6 +38,20 @@ func getRoutes(app *middleware.App) []Route {
 			false,
 		},
 		{
+			"SubmitTimes",
+			"POST",
+			"/submit-times/",
+			middleware.WrapApp(app, controllers.SubmitTimes),
+			false,
+		},
+		{
+			"GetLeaderBoard",
+			"GET",
+			"/leaderboard/",
+			middleware.WrapApp(app, controllers.GetLeaderboard),
+			false,
+		},
+		{
 			"Users",
 			"Get",
 			"/users/",
