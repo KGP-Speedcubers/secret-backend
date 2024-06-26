@@ -12,11 +12,11 @@ func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 	app := r.Context().Value(middleware.APP_CTX_KEY).(*middleware.App)
 	db := app.DB
 
-	leaderboard := []models.User{}
+	leaderboard := []models.Results{}
 
 	tx := db.
-		Table("users").
-		Order("score desc").
+		Table("results").
+		Order("ao5 desc").
 		Find(&leaderboard)
 
 	if tx.Error != nil {
@@ -25,7 +25,7 @@ func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(leaderboard) == 0 {
-		utils.RespondWithHTTPMessage(r, w, http.StatusOK, "No users exist.")
+		utils.RespondWithHTTPMessage(r, w, http.StatusOK, "No results exist.")
 		return
 	}
 
