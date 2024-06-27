@@ -11,10 +11,16 @@ import (
 )
 
 func MigrateModels(db *gorm.DB) error {
-	user_mig_err := db.AutoMigrate(&models.User{})
+	user_mig_err := db.AutoMigrate(&models.Users{})
 	if user_mig_err != nil {
 		log.Err(user_mig_err).Msg("User migration error.")
 		return user_mig_err
+	}
+
+	result_mig_err := db.AutoMigrate(&models.Results{})
+	if result_mig_err != nil {
+		log.Err(result_mig_err).Msg("Result migration error.")
+		return result_mig_err
 	}
 
 	return nil

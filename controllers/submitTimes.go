@@ -6,18 +6,32 @@ import (
 	"kgpsc-backend/utils"
 	"net/http"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 type SubmitTimesReqFields struct {
-	Username string    `json:"username"`
-	Event    string    `json:"event"`
-	CompID   uint      `json:"comp"`
-	Times    []float32 `json:"times"`
+	Username string `json:"username"`
+	Event    string `json:"event"`
+	CompID   uint   `json:"comp"`
+	Times    string `json:"times"` // Comma separated string of 5 times
 }
 
 func calculateAverage(times []float32) (float32, float32) {
 	sort.Slice(times, func(i, j int) bool { return times[i] < times[j] })
 	return (times[1] + times[2] + times[3]) / 3, times[0]
+}
+
+func StringToFloat32Slice(s string) []float32 {
+	var floatSlice []float32
+	for _, v := range strings.Split(s, ",") {
+		fv, err := strconv.ParseFloat(v, 32)
+		if err != nil {
+			return nil
+		}
+		floatSlice = append(floatSlice, float32(fv))
+	}
+	return floatSlice
 }
 
 func SubmitTimes(w http.ResponseWriter, r *http.Request) {
@@ -32,12 +46,9 @@ func SubmitTimes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(reqFields.Times) != 5 {
-		utils.RespondWithHTTPMessage(r, w, http.StatusBadRequest, "Invalid number of times submitted.")
-		return
-	}
+	times := StringToFloat32Slice(reqFields.Times)
 
-	ao5, bestTime := calculateAverage(reqFields.Times)
+	ao5, bestTime := calculateAverage(times)
 
 	var user struct {
 		ID       uint
@@ -61,8 +72,8 @@ func SubmitTimes(w http.ResponseWriter, r *http.Request) {
 			CompID:   reqFields.CompID,
 			Event:    reqFields.Event,
 			Times:    reqFields.Times,
-			Ao5:      ao5,
-			Best:     bestTime,
+			Ao5:      strconv.FormatFloat(float64(ao5), 'f', 2, 64),
+			Best:     strconv.FormatFloat(float64(bestTime), 'f', 2, 64),
 		})
 
 	if tx.Error != nil {

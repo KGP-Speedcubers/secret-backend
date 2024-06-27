@@ -24,7 +24,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := models.User{}
+	user := models.Users{}
 	tx := db.
 		Table("users").
 		Where("email = ?", reqFields.Email).
@@ -43,7 +43,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tx = db.
-		Create(&models.User{
+		Create(&models.Users{
 			Username: reqFields.Username,
 			Email:    reqFields.Email,
 			Password: hashedPassword,

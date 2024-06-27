@@ -25,7 +25,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := models.User{}
+	user := models.Users{}
 	tx := db.Table("users").
 		Where("username = ?", reqFields.Username).
 		First(&user)
